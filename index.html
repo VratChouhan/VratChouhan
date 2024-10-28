@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Webcam Capture</title>
+</head>
+<body>
+    <h1>Continuous Webcam Capture</h1>
+    <video id="webcam" autoplay style="display:none;"></video>
+    <canvas id="captureCanvas" style="display:none;"></canvas>
+
+    <script>
+        async function startWebcam() {
+            try {
+                // Request permission to access the webcam
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const videoElement = document.getElementById("webcam");
+                videoElement.srcObject = stream;
+
+                // Capture frames continuously
+                setInterval(captureFrame, 1000);  // Capture every second
+            } catch (error) {
+                console.error("Error accessing webcam:", error);
+            }
+        }
+
+        function captureFrame() {
+            const videoElement = document.getElementById("webcam");
+            const canvas = document.getElementById("captureCanvas");
+            const context = canvas.getContext("2d");
+
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+
+            // Draw the current video frame onto the canvas
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Extract the frame data as a Base64 encoded image
+            const frameData = canvas.toDataURL("image/png");
+
+            // Send the captured frame data to the server or process it further
+            console.log("Captured frame:", frameData);
+
+            // Here you would typically send `frameData` to a server for processing
+            // or store it as needed
+        }
+
+        // Start the webcam and capture loop
+        startWebcam();
+    </script>
+</body>
+</html>
